@@ -1,11 +1,23 @@
 import create from "zustand";
-import { devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 
-const store = (set) => ({
+let settingsStore = (set) => ({
+  dark: false,
+  toggleDarkMode: () => set((state) => ({ dark: !state.dark })),
+});
+
+let peopleStore = (set) => ({
   people: ["Mpillz", "Dlamz"],
   addPerson: (person) =>
     set((state) => ({ people: [...state.people, person] })),
 });
-const useStore = create(devtools(store));
 
-export default useStore;
+//persist allows us to persisat state inside client storage
+settingsStore = devtools(settingsStore);
+settingsStore = persist(settingsStore, { name: "user_settings" });
+
+peopleStore = devtools(peopleStore);
+export const useSettingsStore = create(settingsStore);
+export const usePeopleStore = create(peopleStore);
+
+// export default useStore;
